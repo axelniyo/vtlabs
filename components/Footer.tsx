@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
         </div>
         <div className="mt-6 text-sm">
             <Link to="/admin" className="text-gray-400 hover:text-white transition-colors duration-200">
-               Admin Login
+              Login
             </Link>
         </div>
       </div>
