@@ -1,0 +1,5 @@
+{
+  "name": "VTLabs Corporate Website",
+  "description": "A production-ready corporate website for VTLabs featuring a training center, project showcase, and an admin dashboard. Built with React and Tailwind CSS for a clean, modern UI.",
+  "requestFramePermissions": []
+}
