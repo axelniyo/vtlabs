@@ -1,73 +1,99 @@
 
-import { mockPosts, mockTrainingPrograms, mockProjects, mockApplications, mockGalleryImages } from '../data/mockData';
 import { Post, TrainingProgram, Project, Application, GalleryImage } from '../types';
+// Re-import the local mock data for fallback purposes
+import { 
+    mockPosts, 
+    mockTrainingPrograms, 
+    mockProjects, 
+    mockApplications, 
+    mockGalleryImages 
+} from '../data/mockData';
 
-// Simulate API latency
-const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+const API_BASE_URL = 'http://localhost:3001/api';
 
-// Let's make the data mutable for admin dashboard simulations
-let posts = [...mockPosts];
-let trainingPrograms = [...mockTrainingPrograms];
-let projects = [...mockProjects];
-let applications = [...mockApplications];
-let galleryImages = [...mockGalleryImages];
+const handleResponse = async (response: Response) => {
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Something went wrong');
+    }
+    return response.json();
+};
 
 export const api = {
   getPosts: async (): Promise<Post[]> => {
-    await delay(200);
-    return [...posts].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    try {
+      const response = await fetch(`${API_BASE_URL}/posts`);
+      return await handleResponse(response);
+    } catch (error) {
+      console.warn("⚠️ Backend not available. Falling back to local mock data for posts.", error);
+      return mockPosts;
+    }
   },
   
   addPost: async (postData: Omit<Post, 'id' | 'createdAt'>): Promise<Post> => {
-    await delay(300);
-    const newPost: Post = {
-        ...postData,
-        id: `post_${Date.now()}`,
-        createdAt: new Date().toISOString(),
-    };
-    posts.unshift(newPost);
-    return newPost;
+    const response = await fetch(`${API_BASE_URL}/posts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(postData),
+    });
+    return handleResponse(response);
   },
 
   getTrainingPrograms: async (): Promise<TrainingProgram[]> => {
-    await delay(200);
-    return [...trainingPrograms].sort((a, b) => b.year - a.year);
+    try {
+        const response = await fetch(`${API_BASE_URL}/training-programs`);
+        return await handleResponse(response);
+    } catch(error) {
+        console.warn("⚠️ Backend not available. Falling back to local mock data for training programs.", error);
+        return mockTrainingPrograms;
+    }
   },
 
   addTrainingProgram: async (programData: Omit<TrainingProgram, 'id'>): Promise<TrainingProgram> => {
-    await delay(300);
-    const newProgram: TrainingProgram = {
-        ...programData,
-        id: `tp_${Date.now()}`,
-    };
-    trainingPrograms.unshift(newProgram);
-    return newProgram;
+     const response = await fetch(`${API_BASE_URL}/training-programs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(programData),
+    });
+    return handleResponse(response);
   },
   
   getProjects: async (): Promise<Project[]> => {
-    await delay(200);
-    return [...projects].sort((a, b) => b.year - a.year);
+    try {
+        const response = await fetch(`${API_BASE_URL}/projects`);
+        return await handleResponse(response);
+    } catch(error) {
+        console.warn("⚠️ Backend not available. Falling back to local mock data for projects.", error);
+        return mockProjects;
+    }
   },
 
   getGalleryImages: async (): Promise<GalleryImage[]> => {
-    await delay(200);
-    return [...galleryImages];
+    try {
+        const response = await fetch(`${API_BASE_URL}/gallery-images`);
+        return await handleResponse(response);
+    } catch (error) {
+        console.warn("⚠️ Backend not available. Falling back to local mock data for gallery images.", error);
+        return mockGalleryImages;
+    }
   },
   
   submitApplication: async (appData: Omit<Application, 'id' | 'submittedAt'>): Promise<Application> => {
-    await delay(500);
-    const newApplication: Application = {
-      ...appData,
-      id: `app_${Date.now()}`,
-      submittedAt: new Date().toISOString(),
-    };
-    applications.push(newApplication);
-    console.log("New Application Submitted:", newApplication);
-    return newApplication;
+     const response = await fetch(`${API_BASE_URL}/applications`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(appData),
+    });
+    return handleResponse(response);
   },
 
   getApplications: async (): Promise<Application[]> => {
-    await delay(200);
-    return [...applications].sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
+    try {
+        const response = await fetch(`${API_BASE_URL}/applications`);
+        return await handleResponse(response);
+    } catch (error) {
+        console.warn("⚠️ Backend not available. Falling back to local mock data for applications.", error);
+        return mockApplications;
+    }
   },
 };
